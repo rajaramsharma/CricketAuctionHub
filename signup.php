@@ -25,10 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param('sss', $name, $email, $hashedPassword);
 
     if ($stmt->execute()) {
-        echo "Signup successful! You can now log in.";
+        header("Location: login.php"); // Redirect to the login page
+        exit();
     } else {
-        echo "Signup failed! Email might already be registered.";
+        header("Location: signup.php?error=failed"); // Redirect back with an error (optional)
+        exit();
     }
+    
 
     $stmt->close();
     $conn->close();

@@ -102,6 +102,7 @@ button:hover{
 		<input type="checkbox" id="chk" aria-hidden="true">
 
 			<div class="signup">
+<<<<<<< HEAD
 				<form>
 					<label for="chk" aria-hidden="true">Sign up</label>
 					<input type="text" name="txt" placeholder="User name" required="">
@@ -110,6 +111,17 @@ button:hover{
 					<input type="password" name="pswd" placeholder="Password" required="">
 					<button>Sign up</button>
 				</form>
+=======
+    <form action="signup.php" method="POST">
+        <label for="chk" aria-hidden="true">Sign up</label>
+        <input type="text" name="txt" placeholder="User name" required="">
+        <input type="email" name="email" placeholder="Email" required="">
+        <input type="password" name="password" placeholder="Password" required="">
+        <button type="submit">Sign up</button>
+    </form>
+
+
+>>>>>>> 3cec28db7881c53c68d5e661a39e34e33bde39fb
 			</div>
 
 			<div class="login">

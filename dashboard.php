@@ -50,6 +50,25 @@ $conn->close();
             font-weight: bold;
         }
 
+        header .navbar {
+            display: flex;
+            gap: 15px;
+        }
+
+        header .navbar button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        header .navbar button:hover {
+            background: #0056b3;
+        }
+
         header .user-dropdown {
             position: relative;
         }
@@ -63,15 +82,15 @@ $conn->close();
             cursor: pointer;
             font-size: 14px;
             display: flex;
-            align-items: center; /* Ensures icon and text are aligned */
-            gap: 10px; /* Adds space between icon and text */
+            align-items: center;
+            gap: 10px;
             position: relative;
         }
 
         header .user-dropdown button img {
             width: 20px;
             height: 20px;
-            object-fit: cover; /* Ensures image scales properly */
+            object-fit: cover;
         }
 
         header .user-dropdown .dropdown-menu {
@@ -119,8 +138,13 @@ $conn->close();
 </head>
 <body>
     <!-- Header -->
+
     <header>
         <div class="logo">Auction Dashboard</div>
+        <div class="navbar">
+            <button onclick="location.href='match_schedule.php'">Match Schedule</button>
+            <button onclick="location.href='live_score.php'">Live Score</button>
+        </div>
         <div class="user-dropdown">
             <button>
                 <?php echo htmlspecialchars($username); ?>

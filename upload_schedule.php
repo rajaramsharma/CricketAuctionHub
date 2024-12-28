@@ -18,14 +18,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("ssss", $team1, $team2, $date, $time);
 
     if ($stmt->execute()) {
-        echo "<p style='text-align: center; color: green;'>Match schedule uploaded successfully!</p>";
+        // Redirect to dashboard.php if successful
+        echo "<script>
+            alert('Match schedule uploaded successfully!');
+            window.location.href = 'dashboard.php';
+        </script>";
     } else {
-        echo "<p style='text-align: center; color: red;'>Error: " . $stmt->error . "</p>";
+        // Show an alert message for errors
+        echo "<script>
+            alert('Error: " . $stmt->error . "');
+        </script>";
     }
-
+    
     $stmt->close();
     $conn->close();
-} else {
-    echo "<p style='text-align: center; color: red;'>Invalid request method.</p>";
-}
+    } else {
+        echo "<script>
+            alert('Invalid request method.');
+        </script>";
+    }
+    
 ?>

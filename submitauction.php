@@ -19,11 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $auctionName = $_POST['auctionName'];
     $auctionDate = $_POST['auctionDate'];
     $auctionTime = $_POST['auctionTime'];
-    $pointsPerTeam = $_POST['pointsPerTeam'];
-    $baseBid = $_POST['baseBid'];
-    $bidIncreaseBy = $_POST['bidIncreaseBy'];
-    $playerPerTeamMax = $_POST['playerPerTeamMax'];
-    $playerPerTeamMin = $_POST['playerPerTeamMin'];
+    $pointsPerTeam = (int)$_POST['pointsPerTeam']; // Ensure integer
+    $baseBid = (float)$_POST['baseBid'];           // Ensure float
+    $bidIncreaseBy = (float)$_POST['bidIncreaseBy']; // Ensure float
+    $playerPerTeamMax = (int)$_POST['playerPerTeamMax']; // Ensure integer
+    $playerPerTeamMin = (int)$_POST['playerPerTeamMin']; // Ensure integer
 
     // Check if required fields are empty
     if (empty($sportsType) || empty($season) || empty($auctionName) || empty($auctionDate) || empty($auctionTime) ||
@@ -38,8 +38,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare the SQL statement
     if ($stmt = $conn->prepare($sql)) {
-        // Bind the parameters
-        $stmt->bind_param("ssssssddddd", $sportsType, $season, $auctionName, $auctionDate, $auctionTime, $pointsPerTeam, $baseBid, $bidIncreaseBy, $playerPerTeamMax, $playerPerTeamMin);
+        // Bind the parameters (updated types: s=string, i=integer, d=double)
+        $stmt->bind_param(
+            "sssssiddii", 
+            $sportsType, 
+            $season, 
+            $auctionName, 
+            $auctionDate, 
+            $auctionTime, 
+            $pointsPerTeam, 
+            $baseBid, 
+            $bidIncreaseBy, 
+            $playerPerTeamMax, 
+            $playerPerTeamMin
+        );
 
         // Execute the statement
         if ($stmt->execute()) {

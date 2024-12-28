@@ -8,14 +8,13 @@
     <link rel="stylesheet" href="styles.css"> <!-- Link your CSS file here -->
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>Create Auction</h1>
-        <form action="submitauction.php" method="post" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="auctionLogo">Auction Logo</label>
-                <input type="file" id="auctionLogo" name="auctionLogo" accept="image/*" required>
-            </div>
+    </header>
 
+    <div class="container">
+        <form action="submitauction.php" method="post" enctype="multipart/form-data">
+            
             <div class="form-group">
                 <label for="sportsType">Sports Type*</label>
                 <select id="sportsType" name="sportsType" required>
@@ -79,52 +78,71 @@
     </div>
 
     <style>
-        /* Global Styles */
+        /* Global Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body Style */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f1f5f9;
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            font-family: 'Helvetica Neue', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            flex-direction: column;
             color: #333;
+            padding-top: 30px;
+        }
+
+        /* Header */
+        header {
+            width: 100%;
+            background-color: #4b79a1;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 36px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Container */
         .container {
-            background-color: #ffffff;
+            background-color: #fff;
+            border-radius: 12px;
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 650px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+            transform: scale(1);
+            transition: transform 0.3s ease-in-out;
+            margin-top: 50px; /* Space from header */
         }
 
-        /* Heading */
-        h1 {
-            font-size: 32px;
-            color: #2b3e50;
-            margin-bottom: 30px;
-            text-align: center;
+        .container:hover {
+            transform: scale(1.02);
         }
 
         /* Form Elements */
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         label {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
             display: block;
-            color: #555;
         }
 
         input[type="text"],
@@ -134,46 +152,55 @@
         select,
         input[type="file"] {
             width: 100%;
-            padding: 12px;
+            padding: 15px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-top: 5px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            outline: none;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
         }
 
         /* Focus Effect */
-        input:focus, select:focus {
-            border-color: #5c6bc0;
-            box-shadow: 0 0 5px rgba(92, 107, 192, 0.5);
-            outline: none;
+        input:focus,
+        select:focus {
+            border: 1px solid #4b79a1;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(75, 121, 161, 0.3);
         }
 
         /* Button Styling */
         button {
-            background-color: #4caf50;
+            background-color: #4CAF50;
             color: white;
             padding: 15px;
             border: none;
             width: 100%;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
         }
 
-        /* Media Query for Responsive Design */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 28px;
-            }
+        /* Subtle Hover Effect */
+        .form-group:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+        }
 
+        /* Responsive Design */
+        @media (max-width: 600px) {
             .container {
                 padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
             }
 
             button {

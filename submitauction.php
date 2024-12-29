@@ -3,6 +3,16 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+// Start the session
+session_start();
+
+// Check if the user is authenticated
+if (!isset($_SESSION['user_id'])) {
+    // Redirect to the login page if not authenticated
+    header("Location: login.php");
+    exit();
+}
+
 // Include database connection
 $conn = new mysqli('localhost', 'root', '', 'cricket');
 
@@ -12,7 +22,6 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
     // Get the form data
     $sportsType = $_POST['sportsType'];
     $season = $_POST['season'];
@@ -25,6 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $playerPerTeamMax = (int)$_POST['playerPerTeamMax']; // Ensure integer
     $playerPerTeamMin = (int)$_POST['playerPerTeamMin']; // Ensure integer
 
+    // Get the user ID from the session
+    $userId = $_SESSION['user_id'];
+
     // Check if required fields are empty
     if (empty($sportsType) || empty($season) || empty($auctionName) || empty($auctionDate) || empty($auctionTime) ||
         empty($pointsPerTeam) || empty($baseBid) || empty($bidIncreaseBy) || empty($playerPerTeamMax) || empty($playerPerTeamMin)) {
@@ -33,14 +45,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare SQL statement to insert form data into the auctions table
-    $sql = "INSERT INTO auctions (sports_type, season, auction_name, auction_date, auction_time, points_per_team, base_bid, bid_increase_by, player_per_team_max, player_per_team_min) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO auctions (user_id, sports_type, season, auction_name, auction_date, auction_time, points_per_team, base_bid, bid_increase_by, player_per_team_max, player_per_team_min) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Prepare the SQL statement
     if ($stmt = $conn->prepare($sql)) {
         // Bind the parameters (updated types: s=string, i=integer, d=double)
         $stmt->bind_param(
-            "sssssiddii", 
+            "isssssiddii", 
+            $userId,         // User ID from session
             $sportsType, 
             $season, 
             $auctionName, 

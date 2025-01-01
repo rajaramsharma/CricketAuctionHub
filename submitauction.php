@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if required fields are empty
     if (empty($sportsType) || empty($season) || empty($auctionName) || empty($auctionDate) || empty($auctionTime) ||
         empty($pointsPerTeam) || empty($baseBid) || empty($bidIncreaseBy) || empty($playerPerTeamMax) || empty($playerPerTeamMin)) {
-        echo "All fields are required.";
+        echo "<script>alert('All fields are required.');</script>";
         exit;
     }
 
@@ -68,15 +68,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the statement
         if ($stmt->execute()) {
-            echo "Auction created successfully!";
+            // Success: Show alert and redirect to dashboard
+            echo "<script>
+                    alert('Auction created successfully!');
+                    window.location.href = 'dashboard.php';
+                  </script>";
+            exit;
         } else {
-            echo "Error: " . $stmt->error; // This will show detailed SQL errors
+            echo "<script>alert('Error: " . $stmt->error . "');</script>";
         }
 
         // Close the prepared statement
         $stmt->close();
     } else {
-        echo "Error: " . $conn->error; // This will show any connection issues or errors with preparing the statement
+        echo "<script>alert('Error: " . $conn->error . "');</script>";
     }
 
     // Close the database connection

@@ -1,7 +1,7 @@
 <?php include 'header.php'; ?>
 <?php
 // Start the session
-//session_start();
+
 
 // Check if the user is authenticated
 if (!isset($_SESSION['user_id'])) {
@@ -94,6 +94,11 @@ $userId = $_SESSION['user_id'];
             background-color: #45a049;
         }
     </style>
+    <script>
+    function redirectToDetail(auctionId) {
+        window.location.href = "viewdetail.php?auction_id=" + auctionId;
+    }
+    </script>
 </head>
 <body>
     <div class="header">
@@ -111,7 +116,7 @@ $userId = $_SESSION['user_id'];
         }
 
         // Fetch auctions created by the logged-in user
-        $sql = "SELECT auction_name, sports_type, auction_date 
+        $sql = "SELECT auction_id, auction_name, sports_type, auction_date 
                 FROM auctions 
                 WHERE user_id = ?";
         
@@ -127,8 +132,7 @@ $userId = $_SESSION['user_id'];
                     echo '<h2>Auction Name: ' . htmlspecialchars($row['auction_name']) . '</h2>';
                     echo '<p><strong>Sports Type:</strong> ' . htmlspecialchars($row['sports_type']) . '</p>';
                     echo '<p><strong>Auction Date:</strong> ' . htmlspecialchars($row['auction_date']) . '</p>';
-                    echo '<button onclick="window.location.href=\'viewdetail.php\';">View Details</button>';
-
+                    echo '<button onclick="redirectToDetail(' . $row['auction_id'] . ')">View Details</button>';
                     echo '</div>';
                 }
             } else {

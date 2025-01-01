@@ -126,8 +126,13 @@ if (isset($_GET['auction_id'])) {
     <p><strong>Min Players Per Team:</strong> <?php echo htmlspecialchars($auction['player_per_team_min']); ?></p>
 
     <div class="actions">
-        <a href="deleteAuction.php?auctionId=<?php echo $auction['auction_id']; ?>" onclick="return confirmDelete()">Delete Auction</a>
-    </div>
+    <!-- Existing Delete Auction Button -->
+    <a href="deleteAuction.php?auctionId=<?php echo $auction['auction_id']; ?>" onclick="return confirmDelete()">Delete Auction</a>
+    
+    <!-- New View Teams Button -->
+    <a href="teams.php" class="view-teams-btn">View Teams</a>
+</div>
+
 </div>
 
 <script>

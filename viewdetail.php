@@ -1,6 +1,8 @@
+
+<?php include 'header.php'; ?>
 <?php
 // Start session to check if the user is logged in
-session_start();
+
 
 // Check if the user is logged in by checking for 'user_id' in the session
 if (!isset($_SESSION['user_id'])) {
@@ -130,7 +132,9 @@ if (isset($_GET['auction_id'])) {
     <a href="deleteAuction.php?auctionId=<?php echo $auction['auction_id']; ?>" onclick="return confirmDelete()">Delete Auction</a>
     
     <!-- New View Teams Button -->
-    <a href="teams.php" class="view-teams-btn">View Teams</a>
+    <!-- Updated View Teams Button -->
+<a href="teams.php?auction_id=<?php echo $auction['auction_id']; ?>" class="view-teams-btn">View Teams</a>
+
 </div>
 
 </div>

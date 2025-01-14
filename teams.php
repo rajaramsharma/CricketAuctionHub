@@ -1,20 +1,19 @@
 <?php include 'header.php'; ?>
-<?php
 
+<?php
 // Start session and check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-// Get the auction ID from the session
-if (!isset($_SESSION['auction_id'])) {
-    echo "<script>alert('Auction ID not set.'); window.location.href='auctionList.php';</script>";
+// Check if auction_id is provided in the GET parameter
+if (!isset($_GET['auction_id']) || empty($_GET['auction_id'])) {
+    echo "<script>alert('Auction ID is missing or invalid.'); window.location.href='auctionList.php';</script>";
     exit;
 }
 
-$auctionId = $_SESSION['auction_id'];
-
+$auctionId = intval($_GET['auction_id']); // Sanitize auction_id
 ?>
 
 <!DOCTYPE html>
@@ -24,109 +23,119 @@ $auctionId = $_SESSION['auction_id'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Teams</title>
     <style>
-        /* Your existing styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #ffe6e6, #fff0f5);
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            color: #4d004d;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #007bff;
-            color: #fff;
+            text-align: center;
             padding: 20px;
+            background: #ffcccb;
+            color: #800040;
+            font-size: 1.5em;
+            border-bottom: 3px solid #ff99cc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .header h1 {
             margin: 0;
         }
 
-        .add-team {
-            text-decoration: none;
+        .header .add-team {
+            display: inline-block;
+            margin-top: 10px;
             padding: 10px 20px;
-            background: linear-gradient(90deg, #4caf50, #00c853);
+            background: #ff99cc;
             color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 25px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            text-align: center;
+            text-decoration: none;
+            font-size: 1em;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.2s;
         }
 
-        .add-team:hover {
-            background: linear-gradient(90deg, #00c853, #4caf50);
-            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05);
+        .header .add-team:hover {
+            background: #ff6699;
+            transform: translateY(-2px);
         }
 
         .container {
-            width: 90%;
-            margin: auto;
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
             justify-content: center;
+            gap: 20px;
+            padding: 20px;
         }
 
         .card {
-            position: relative;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            overflow: hidden;
+            background: #fff0f5;
+            border: 2px solid #ffc0cb;
+            border-radius: 15px;
+            width: 250px;
             text-align: center;
+            padding: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
         }
 
         .card img {
             width: 100%;
-            height: 200px;
+            height: 150px;
             object-fit: cover;
+            border-radius: 10px;
         }
 
         .card h2 {
-            margin: 10px 0;
+            margin: 15px 0 10px;
             font-size: 1.5em;
-            color: #333;
+            color: #800040;
         }
 
         .card p {
-            color: #666;
             margin: 5px 0;
+            font-size: 1em;
+            color: #99004d;
         }
 
-        .delete-btn {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            padding: 8px 15px;
-            background-color: #e74c3c;
+        .card .delete-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #ff99cc;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 1em;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s;
         }
 
-        .delete-btn:hover {
-            background-color: #c0392b;
+        .card .delete-btn:hover {
+            background: #ff3366;
+            transform: translateY(-2px);
         }
+
+        .card .delete-btn:active {
+            transform: translateY(0);
+        }
+    
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <div class="header">
-        <h1>Teams</h1>
-        <a href="addTeam.php" class="add-team">Add New Team</a>
-    </div>
+<div class="header">
+    <h1>Teams</h1>
+    <a href="addTeam.php?auction_id=<?php echo $auctionId; ?>" class="add-team">Add New Team</a>
+</div>
+
     
     <div class="container">
         <?php

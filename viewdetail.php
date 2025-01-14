@@ -134,6 +134,8 @@ if (isset($_GET['auction_id'])) {
     <!-- New View Teams Button -->
     <!-- Updated View Teams Button -->
 <a href="teams.php?auction_id=<?php echo $auction['auction_id']; ?>" class="view-teams-btn">View Teams</a>
+<a href="player.php?auction_id=<?php echo $auction['auction_id']; ?>" class="view-teams-btn">View Player</a>
+
 
 </div>
 

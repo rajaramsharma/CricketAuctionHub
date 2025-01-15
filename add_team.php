@@ -50,17 +50,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Use prepared statement to insert team data with auction_id
-    $stmt = $conn->prepare("INSERT INTO teams (auction_id, team_logo, team_name, team_short_name, shortcut_key) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("issss", $auction_id, $team_logo, $team_name, $team_short_name, $shortcut_key);
+    // Fetch points_per_team from auctions table
+    $pointsQuery = "SELECT points_per_team FROM auctions WHERE auction_id = ?";
+    $pointsStmt = $conn->prepare($pointsQuery);
+    $pointsStmt->bind_param("i", $auction_id);
+    $pointsStmt->execute();
+    $result = $pointsStmt->get_result();
 
-    if ($stmt->execute()) {
-        echo "<script>alert('New team added successfully!'); window.location.href='teams.php?auction_id=$auction_id';</script>";
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $points = $row['points_per_team'];
+
+        // Insert team data into teams table, including points
+        $stmt = $conn->prepare("INSERT INTO teams (auction_id, team_logo, team_name, team_short_name, shortcut_key, points) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssi", $auction_id, $team_logo, $team_name, $team_short_name, $shortcut_key, $points);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('New team added successfully!'); window.location.href='teams.php?auction_id=$auction_id';</script>";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
     } else {
-        echo "Error: " . $stmt->error;
+        echo "<script>alert('Auction ID not found.'); window.location.href='createTeam.php';</script>";
     }
 
-    $stmt->close();
+    $pointsStmt->close();
     $conn->close();
 }
 ?>

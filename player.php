@@ -146,7 +146,7 @@ $auctionId = intval($_GET['auction_id']); // Sanitize auction_id
     }
 
     // Fetch data from the database based on auction_id
-    $sql = "SELECT id, profile_pic, name, playing_style, base_value 
+    $sql = "SELECT id, profile_pic, name, playing_style, base_value, sold_to
             FROM players 
             WHERE auction_id = ?";
     $stmt = $conn->prepare($sql);
@@ -162,6 +162,7 @@ $auctionId = intval($_GET['auction_id']); // Sanitize auction_id
             $name = htmlspecialchars($row['name']);
             $playing_style = htmlspecialchars($row['playing_style']);
             $base_value = htmlspecialchars($row['base_value']); // Changed 'base_price' to 'base_value'
+            $sold_to = htmlspecialchars($row['sold_to']);
 
             echo "
             <div class='card' data-player-id='$id'>
@@ -169,6 +170,7 @@ $auctionId = intval($_GET['auction_id']); // Sanitize auction_id
                 <h2>$name</h2>
                 <p><strong>Playing Style:</strong> $playing_style</p>
                 <p><strong>Base Value:</strong> $base_value</p> <!-- Updated 'Base Price' to 'Base Value' -->
+                 <p><strong>SOLD TO:</strong> $sold_to</p>
                 <button type='button' class='delete-btn'>Delete</button>
             </div>";
         }

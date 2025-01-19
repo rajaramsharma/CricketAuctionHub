@@ -73,7 +73,7 @@ $conn->close();
         }
 
         header .user-dropdown button {
-            background: #d32f2f;
+            background:rgb(197, 79, 79);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -137,7 +137,7 @@ $conn->close();
     <div class="user-dropdown">
         <button>
             <?php echo htmlspecialchars($username); ?>
-            <img src="user-icon.png" alt="User Icon">
+            <img src="user-icon.jpg" alt="User Icon">
         </button>
         <div class="dropdown-menu">
             <a href="dashboard.php">Dashboard</a>

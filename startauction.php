@@ -17,32 +17,34 @@ if ($auctionId === 0) {
     exit;
 }
 
-// Fetch a random player from the players table
-$sql = "SELECT id, name, playing_style, base_value, profile_pic FROM players WHERE auction_id = ? ORDER BY RAND() LIMIT 1";
+// Fetch a random player whose "sold_to" column is NULL
+$sql = "SELECT id, name, playing_style, base_value, profile_pic 
+        FROM players 
+        WHERE auction_id = ? AND sold_to IS NULL 
+        ORDER BY RAND() LIMIT 1";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $auctionId);
 $stmt->execute();
 $player = $stmt->get_result()->fetch_assoc();
 
+// Check if any player is available for auction
 if (!$player) {
-    echo "<p>No players available for auction.</p>";
+    echo "<div style='text-align: center; margin-top: 20%; font-family: Arial, sans-serif;'>
+            <h1>No players remain to be sold.</h1>
+          </div>";
     exit;
 }
 
-// Fetch teams participating in the auction along with their points from the auction table
+// Fetch teams participating in the auction along with their points
 $teamQuery = "
     SELECT 
         t.team_id, 
         t.team_name, 
-        a.points_per_team 
+        t.points 
     FROM 
         teams t 
-    JOIN 
-        auctions a 
-    ON 
-        t.auction_id = a.auction_id 
     WHERE 
-        a.auction_id = ?";
+        t.auction_id = ?";
 $teamStmt = $conn->prepare($teamQuery);
 $teamStmt->bind_param("i", $auctionId);
 $teamStmt->execute();
@@ -56,19 +58,44 @@ $teams = $teamStmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start Auction</title>
     <style>
-        /* Same CSS styles as before */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .auction-container {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .player-photo {
+            width: 150px;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
 <div class="auction-container">
-    <div class="auction-header">NPL Players Auction</div>
+    <h1>NPL Players Auction</h1>
     <div class="player-details">
         <div class="player-photo" style="background-image: url('uploads/<?php echo htmlspecialchars($player['profile_pic']); ?>');"></div>
         <div class="player-info">
             <h2><?php echo htmlspecialchars($player['name']); ?></h2>
             <p><strong>Playing Style:</strong> <?php echo htmlspecialchars($player['playing_style']); ?></p>
-            <p><strong>Base Value:</strong> <?php echo htmlspecialchars($player['base_value']); ?></p>
+            <p><strong>Base Value:</strong> ₹<?php echo htmlspecialchars($player['base_value']); ?></p>
         </div>
     </div>
     <div class="form-container">
@@ -77,7 +104,7 @@ $teams = $teamStmt->get_result();
             <select name="team_id" id="team" required>
                 <?php while ($team = $teams->fetch_assoc()) { ?>
                     <option value="<?php echo $team['team_id']; ?>">
-                        <?php echo htmlspecialchars($team['team_name']); ?> (Points: <?php echo $team['points_per_team']; ?>)
+                        <?php echo htmlspecialchars($team['team_name']); ?> (Points: <?php echo $team['points']; ?>)
                     </option>
                 <?php } ?>
             </select>
@@ -94,6 +121,7 @@ $teams = $teamStmt->get_result();
 </html>
 
 <?php
+// Close connections
 $stmt->close();
 $teamStmt->close();
 $conn->close();

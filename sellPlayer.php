@@ -10,78 +10,76 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Validate POST data
-$auctionId = intval($_POST['auction_id'] ?? 0);
-$teamId = intval($_POST['team_id'] ?? 0);
-$playerId = intval($_POST['player_id'] ?? 0);
-$bids = intval($_POST['bids'] ?? 0);
+// Check if form data is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $auctionId = intval($_POST['auction_id']);
+    $playerId = intval($_POST['player_id']);
+    $teamId = intval($_POST['team_id']);
+    $bidValue = intval($_POST['bids']);
 
-if ($auctionId === 0 || $teamId === 0 || $playerId === 0 || $bids <= 0) {
-    echo "<script>alert('Invalid input data.'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-    exit;
+    // Validate inputs
+    if ($auctionId <= 0 || $playerId <= 0 || $teamId <= 0 || $bidValue <= 0) {
+        echo "<script>alert('Invalid input data. Please try again.'); window.location.href='startAuction.php?auction_id=$auctionId';</script>";
+        exit;
+    }
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Get the team's current points and name
+        $teamQuery = "SELECT points, team_name FROM teams WHERE team_id = ?";
+        $teamStmt = $conn->prepare($teamQuery);
+        if (!$teamStmt) {
+            throw new Exception("Error preparing team query: " . $conn->error);
+        }
+        $teamStmt->bind_param("i", $teamId);
+        $teamStmt->execute();
+        $team = $teamStmt->get_result()->fetch_assoc();
+        $teamPoints = intval($team['points']);
+        $teamName = $team['team_name'];
+
+        // Check if the team has enough points to bid
+        if ($teamPoints < $bidValue) {
+            echo "<script>alert('Insufficient points for this bid.'); window.location.href='startAuction.php?auction_id=$auctionId';</script>";
+            exit;
+        }
+
+        // Update the player's "sold_to" column with the team name
+        $updatePlayerQuery = "UPDATE players SET sold_to = ? WHERE id = ?";
+        $updatePlayerStmt = $conn->prepare($updatePlayerQuery);
+        if (!$updatePlayerStmt) {
+            throw new Exception("Error preparing player update query: " . $conn->error);
+        }
+        $updatePlayerStmt->bind_param("si", $teamName, $playerId);
+        $updatePlayerStmt->execute();
+
+        // Deduct the bid value from the team's points
+        $updateTeamQuery = "UPDATE teams SET points = points - ? WHERE team_id = ?";
+        $updateTeamStmt = $conn->prepare($updateTeamQuery);
+        if (!$updateTeamStmt) {
+            throw new Exception("Error preparing team update query: " . $conn->error);
+        }
+        $updateTeamStmt->bind_param("ii", $bidValue, $teamId);
+        $updateTeamStmt->execute();
+
+        // Commit the transaction
+        $conn->commit();
+
+        // Redirect back to the auction page
+        echo "<script>alert('Player sold successfully to $teamName for $bidValue points.'); window.location.href='startAuction.php?auction_id=$auctionId';</script>";
+    } catch (Exception $e) {
+        // Rollback the transaction in case of any error
+        $conn->rollback();
+        echo "<script>alert('Error: " . $e->getMessage() . "'); window.location.href='startAuction.php?auction_id=$auctionId';</script>";
+    } finally {
+        // Close prepared statements only if initialized
+        if (isset($teamStmt)) $teamStmt->close();
+        if (isset($updatePlayerStmt)) $updatePlayerStmt->close();
+        if (isset($updateTeamStmt)) $updateTeamStmt->close();
+    }
 }
 
-// Fetch player's base value
-$playerQuery = "SELECT base_value FROM players WHERE id = ?";
-$playerStmt = $conn->prepare($playerQuery);
-$playerStmt->bind_param("i", $playerId);
-$playerStmt->execute();
-$player = $playerStmt->get_result()->fetch_assoc();
-
-if (!$player) {
-    echo "<script>alert('Player not found.'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-    exit;
-}
-
-$baseValue = $player['base_value'];
-$finalPrice = $baseValue * $bids;
-
-// Fetch team's remaining points from the teams table
-$teamQuery = "SELECT points FROM teams WHERE team_id = ? AND auction_id = ?";
-$teamStmt = $conn->prepare($teamQuery);
-$teamStmt->bind_param("ii", $teamId, $auctionId);
-$teamStmt->execute();
-$team = $teamStmt->get_result()->fetch_assoc();
-
-if (!$team) {
-    echo "<script>alert('Team not found.'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-    exit;
-}
-
-$remainingPoints = $team['points'];
-
-// Check if the team has enough points
-if ($finalPrice > $remainingPoints) {
-    echo "<script>alert('The team does not have enough points to purchase this player.'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-    exit;
-}
-
-// Deduct points and assign the player to the team
-$conn->begin_transaction();
-
-try {
-    // Update the player's team
-    $updatePlayerQuery = "UPDATE players SET team_id = ? WHERE id = ?";
-    $updatePlayerStmt = $conn->prepare($updatePlayerQuery);
-    $updatePlayerStmt->bind_param("ii", $teamId, $playerId);
-    $updatePlayerStmt->execute();
-
-    // Deduct points from the team's points column
-    $updatePointsQuery = "UPDATE teams SET points = points - ? WHERE team_id = ? AND auction_id = ?";
-    $updatePointsStmt = $conn->prepare($updatePointsQuery);
-    $updatePointsStmt->bind_param("iii", $finalPrice, $teamId, $auctionId);
-    $updatePointsStmt->execute();
-
-    // Commit the transaction
-    $conn->commit();
-
-    echo "<script>alert('Player sold successfully!'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-} catch (Exception $e) {
-    // Rollback the transaction in case of an error
-    $conn->rollback();
-    echo "<script>alert('An error occurred while selling the player.'); window.location.href='startauction.php?auction_id=$auctionId';</script>";
-}
-
-// Close the connection
+// Close the database connection
 $conn->close();
 ?>

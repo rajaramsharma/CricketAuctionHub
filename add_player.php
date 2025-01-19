@@ -1,4 +1,9 @@
 <?php
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Database connection
 $servername = "localhost";
 $username = "root";
@@ -19,26 +24,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $auction_id = isset($_GET['auction_id']) ? intval($_GET['auction_id']) : 0;
 
     // Get player details from the form
-    $name = $conn->real_escape_string($_POST['name']);
-    $mobile_no = $conn->real_escape_string($_POST['mobile_no']);
-    $form_no = $conn->real_escape_string($_POST['form_no']);
-    $father_name = $conn->real_escape_string($_POST['father_name']);
-    $age = intval($_POST['age']);
-    $team_owner = isset($_POST['team_owner']) ? 1 : 0;
-    $playing_style = $conn->real_escape_string($_POST['playing_style']);
-    $spec1 = $conn->real_escape_string($_POST['spec1']);
-    $spec2 = $conn->real_escape_string($_POST['spec2']);
-    $spec3 = $conn->real_escape_string($_POST['spec3']);
-    $tshirt_size = $conn->real_escape_string($_POST['tshirt_size']);
-    $jersey_name = $conn->real_escape_string($_POST['jersey_name']);
-    $jersey_number = intval($_POST['jersey_number']);
-    $trouser_size = $conn->real_escape_string($_POST['trouser_size']);
-    $detail = $conn->real_escape_string($_POST['detail']);
-    $base_value = floatval($_POST['base_value']);
+    $name = isset($_POST['name']) ? $conn->real_escape_string($_POST['name']) : '';
+    $mobile_no = isset($_POST['mobile_no']) ? $conn->real_escape_string($_POST['mobile_no']) : '';
+    $form_no = isset($_POST['form_no']) ? $conn->real_escape_string($_POST['form_no']) : '';
+    $father_name = isset($_POST['father_name']) ? $conn->real_escape_string($_POST['father_name']) : '';
+    $age = isset($_POST['age']) ? intval($_POST['age']) : 0;
+    $playing_style = isset($_POST['playing_style']) ? $conn->real_escape_string($_POST['playing_style']) : '';
+    $tshirt_size = isset($_POST['tshirt_size']) ? $conn->real_escape_string($_POST['tshirt_size']) : '';
+    $jersey_name = isset($_POST['jersey_name']) ? $conn->real_escape_string($_POST['jersey_name']) : '';
+    $jersey_number = isset($_POST['jersey_number']) ? intval($_POST['jersey_number']) : 0;
+    $trouser_size = isset($_POST['trouser_size']) ? $conn->real_escape_string($_POST['trouser_size']) : '';
+    $detail = isset($_POST['detail']) ? $conn->real_escape_string($_POST['detail']) : '';
+    $base_value = isset($_POST['base_value']) ? floatval($_POST['base_value']) : 0.0;
 
     // Initialize profile_pic variable
     $profile_pic = null;
 
+    // Handle file upload
     if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] == 0) {
         $target_dir = "uploads/";
         if (!is_dir($target_dir)) {
@@ -66,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Insert player into database with auction_id
     $sql = "INSERT INTO players 
-            (name, mobile_no, form_no, father_name, age, team_owner, playing_style, spec1, spec2, spec3, tshirt_size, jersey_name, jersey_number, trouser_size, detail, base_value, auction_id, profile_pic)
+            (name, mobile_no, form_no, father_name, age, playing_style, tshirt_size, jersey_name, jersey_number, trouser_size, detail, base_value, auction_id, profile_pic)
             VALUES 
-            ('$name', '$mobile_no', '$form_no', '$father_name', '$age', '$team_owner', '$playing_style', '$spec1', '$spec2', '$spec3', '$tshirt_size', '$jersey_name', '$jersey_number', '$trouser_size', '$detail', '$base_value', '$auction_id', '$profile_pic')";
+            ('$name', '$mobile_no', '$form_no', '$father_name', '$age', '$playing_style', '$tshirt_size', '$jersey_name', '$jersey_number', '$trouser_size', '$detail', '$base_value', '$auction_id', '$profile_pic')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Player added successfully!";
@@ -124,34 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="father_name">
             </div>
             
-            <label>Is Team Owner?</label>
-            <input type="checkbox" name="team_owner">
-
             <label>Playing Style</label>
             <select name="playing_style">
                 <option value="Batsman">Batsman</option>
                 <option value="Bowler">Bowler</option>
                 <option value="All-Rounder">All-Rounder</option>
+                <option value="Wicket-Keeper-Batsman">Wicket-Keeper-Batsman</option>
             </select>
-
-            <div class="inline">
-                <label>Specification 1</label>
-                <select name="spec1">
-                    <option value="Spec 1">Spec 1</option>
-                </select>
-            </div>
-            <div class="inline">
-                <label>Specification 2</label>
-                <select name="spec2">
-                    <option value="Spec 2">Spec 2</option>
-                </select>
-            </div>
-            <div class="inline">
-                <label>Specification 3</label>
-                <select name="spec3">
-                    <option value="Spec 3">Spec 3</option>
-                </select>
-            </div>
 
             <div class="inline">
                 <label>T-shirt Size</label>

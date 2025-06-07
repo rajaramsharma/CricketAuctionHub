@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Update the player's "sold_to" column with the team name
-        $updatePlayerQuery = "UPDATE players SET sold_to = ? WHERE id = ?";
+        $updatePlayerQuery = "UPDATE player SET sold_to = ? WHERE id = ?";
         $updatePlayerStmt = $conn->prepare($updatePlayerQuery);
         if (!$updatePlayerStmt) {
             throw new Exception("Error preparing player update query: " . $conn->error);

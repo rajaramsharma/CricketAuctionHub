@@ -129,7 +129,7 @@ $conn->close();
     </div>
     <div class="navbar">
         <button onclick="location.href='uploadmatch_schedule.php'">Match Schedule</button>
-        <button onclick="location.href='live_score.php'">Live Score</button>
+        <button onclick="location.href='liveScores.php'">Live Score</button>
         <button onclick="location.href='createauction.php'">CreateAuction</button>
         <button onclick="location.href='myauction.php'">MyAuction</button>
 

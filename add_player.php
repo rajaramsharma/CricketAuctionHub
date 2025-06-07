@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Insert player into database with auction_id
-    $sql = "INSERT INTO players 
+    $sql = "INSERT INTO player 
             (name, mobile_no, form_no, father_name, age, playing_style, tshirt_size, jersey_name, jersey_number, trouser_size, detail, base_value, auction_id, profile_pic)
             VALUES 
             ('$name', '$mobile_no', '$form_no', '$father_name', '$age', '$playing_style', '$tshirt_size', '$jersey_name', '$jersey_number', '$trouser_size', '$detail', '$base_value', '$auction_id', '$profile_pic')";

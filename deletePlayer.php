@@ -24,7 +24,7 @@ if ($conn->connect_error) {
 }
 
 // Prepare DELETE statement
-$sql = "DELETE FROM players WHERE id = ?";
+$sql = "DELETE FROM player WHERE id = ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     echo 'Failed to prepare statement';

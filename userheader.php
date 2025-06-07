@@ -40,8 +40,8 @@
         <div class="logo"><a href="userdashboard.php">Cricket Portal</a></div>
         <div class="nav-links">
             <a href="matches.php">Matches</a>
-            <a href="scoreboard.php">Scoreboard</a>
-            <a href="teams.php">Teams</a>
+            <a href="index.php">Scoreboard</a>
+            <a href="teamslogin.php">Teams Login</a>
         </div>
     </div>
 </body>

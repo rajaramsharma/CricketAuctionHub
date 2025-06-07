@@ -147,7 +147,7 @@ $auctionId = intval($_GET['auction_id']); // Sanitize auction_id
 
     // Fetch data from the database based on auction_id
     $sql = "SELECT id, profile_pic, name, playing_style, base_value, sold_to
-            FROM players 
+            FROM player
             WHERE auction_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $auctionId);

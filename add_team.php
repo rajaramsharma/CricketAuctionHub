@@ -5,6 +5,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $team_name = $_POST['team_name'];
     $team_short_name = $_POST['team_short_name'];
     $shortcut_key = $_POST['shortcut_key'];
+    $tuser = $_POST['tuser'];
+    $tpassword = password_hash($_POST['tpassword'], PASSWORD_BCRYPT); // Hash password for security
     $team_logo = NULL; // Default value if file upload fails
 
     // Handle file upload for team logo
@@ -61,11 +63,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = $result->fetch_assoc();
         $points = $row['points_per_team'];
 
-        // Insert team data into teams table, including points
-        $stmt = $conn->prepare("INSERT INTO teams (auction_id, team_logo, team_name, team_short_name, shortcut_key, points) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("issssi", $auction_id, $team_logo, $team_name, $team_short_name, $shortcut_key, $points);
-
+        // Insert team data into teams table, including points, tuser, and tpassword
+        $stmt = $conn->prepare("INSERT INTO teams (auction_id, team_logo, team_name, team_short_name, shortcut_key, points, tuser, tpassword) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssiss", $auction_id, $team_logo, $team_name, $team_short_name, $shortcut_key, $points, $tuser, $tpassword);
+     
         if ($stmt->execute()) {
+            // **Insert team name into the bidding table**
+            $biddingStmt = $conn->prepare("INSERT INTO biddingteam (team_list) VALUES (?)");
+            $biddingStmt->bind_param("s", $team_name);
+            $biddingStmt->execute();
+            $biddingStmt->close();
+
             echo "<script>alert('New team added successfully!'); window.location.href='teams.php?auction_id=$auction_id';</script>";
         } else {
             echo "Error: " . $stmt->error;

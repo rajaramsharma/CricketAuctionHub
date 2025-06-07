@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Team</title>
     <style>
-        /* Romantic Theme CSS */
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #ffcccc, #ffe6e6);
@@ -41,7 +40,8 @@
         }
 
         input[type="text"],
-        input[type="file"] {
+        input[type="file"],
+        input[type="password"] {
             width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 20px;
@@ -53,7 +53,8 @@
         }
 
         input[type="text"]:focus,
-        input[type="file"]:focus {
+        input[type="file"]:focus,
+        input[type="password"]:focus {
             outline: none;
             border-color: #ff66a3;
             box-shadow: 0 0 5px #ff99cc;
@@ -80,27 +81,18 @@
         input[type="submit"]:active {
             transform: translateY(0);
         }
-
-        .alert {
-            color: #ff0000;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
     </style>
 </head>
 <body>
     <h2>Add a New Team</h2>
     <?php
-    // Get the auction_id from the query string
     if (!isset($_GET['auction_id']) || empty($_GET['auction_id'])) {
         echo "<script>alert('Auction ID is missing or invalid.'); window.location.href='auctionList.php';</script>";
         exit;
     }
-    $auction_id = intval($_GET['auction_id']); // Sanitize the auction ID
+    $auction_id = intval($_GET['auction_id']);
     ?>
     <form action="add_team.php" method="POST" enctype="multipart/form-data">
-        <!-- Hidden input to pass auction ID -->
         <input type="hidden" name="auction_id" value="<?php echo $auction_id; ?>">
         
         <label for="team_logo">Team Logo (Image):</label>
@@ -114,6 +106,12 @@
         
         <label for="shortcut_key">Shortcut Key:</label>
         <input type="text" id="shortcut_key" name="shortcut_key" required>
+        
+        <label for="tuser">Team Username:</label>
+        <input type="text" id="tuser" name="tuser" required>
+        
+        <label for="tpassword">Team Password:</label>
+        <input type="password" id="tpassword" name="tpassword" required>
         
         <input type="submit" value="Add Team">
     </form>
